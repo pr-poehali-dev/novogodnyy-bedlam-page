@@ -18,17 +18,17 @@ const Index = () => {
 
   useEffect(() => {
     if (isWidgetOpen) {
-      const script = document.createElement('script');
-      script.id = 'f8fccab3a27070026532ce35834ccf30efe43cec';
-      script.src = 'https://olvonata.ru/pl/lite/widget/script?id=1391580';
-      script.async = true;
-      
-      const widgetContainer = document.getElementById('widget-container');
-      if (widgetContainer) {
-        widgetContainer.appendChild(script);
-      }
+      const timer = setTimeout(() => {
+        const script = document.createElement('script');
+        script.id = 'f8fccab3a27070026532ce35834ccf30efe43cec';
+        script.src = 'https://olvonata.ru/pl/lite/widget/script?id=1391580';
+        script.async = true;
+        
+        document.body.appendChild(script);
+      }, 100);
 
       return () => {
+        clearTimeout(timer);
         const existingScript = document.getElementById('f8fccab3a27070026532ce35834ccf30efe43cec');
         if (existingScript) {
           existingScript.remove();
