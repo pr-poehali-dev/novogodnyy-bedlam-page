@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
 
 const Index = () => {
+  const [isWidgetOpen, setIsWidgetOpen] = useState(false);
   const [snowflakes, setSnowflakes] = useState<Array<{ id: number; left: number; duration: number; delay: number }>>([]);
-  const paymentUrl = 'https://olvonata.ru/pl/lite/block?id=1391580';
 
   useEffect(() => {
     const flakes = Array.from({ length: 30 }, (_, i) => ({
@@ -14,6 +15,27 @@ const Index = () => {
     }));
     setSnowflakes(flakes);
   }, []);
+
+  useEffect(() => {
+    if (isWidgetOpen) {
+      const script = document.createElement('script');
+      script.id = 'f8fccab3a27070026532ce35834ccf30efe43cec';
+      script.src = 'https://olvonata.ru/pl/lite/widget/script?id=1391580';
+      script.async = true;
+      
+      const widgetContainer = document.getElementById('widget-container');
+      if (widgetContainer) {
+        widgetContainer.appendChild(script);
+      }
+
+      return () => {
+        const existingScript = document.getElementById('f8fccab3a27070026532ce35834ccf30efe43cec');
+        if (existingScript) {
+          existingScript.remove();
+        }
+      };
+    }
+  }, [isWidgetOpen]);
 
   return (
     <div className="min-h-screen relative overflow-hidden">
@@ -50,13 +72,17 @@ const Index = () => {
           <div className="space-y-4">
             <Button
               size="lg"
-              asChild
+              onClick={() => setIsWidgetOpen(!isWidgetOpen)}
               className="text-lg px-8 py-6 bg-primary hover:bg-primary/90 text-primary-foreground shadow-xl hover:shadow-2xl transition-all duration-300 hover:scale-105"
             >
-              <a href={paymentUrl} target="_blank" rel="noopener noreferrer">
-                🎉 Присоединиться
-              </a>
+              {isWidgetOpen ? '✨ Скрыть форму' : '🎉 Присоединиться'}
             </Button>
+
+            {isWidgetOpen && (
+              <Card className="p-6 bg-card/95 backdrop-blur-sm shadow-2xl animate-scale-in">
+                <div id="widget-container" className="min-h-[200px]"></div>
+              </Card>
+            )}
           </div>
 
           <div className="flex justify-center gap-8 text-4xl md:text-5xl animate-fade-in">
