@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 
 const Index = () => {
   const [isWidgetOpen, setIsWidgetOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [snowflakes, setSnowflakes] = useState<Array<{ id: number; left: number; duration: number; delay: number }>>([]);
 
   useEffect(() => {
@@ -18,17 +19,28 @@ const Index = () => {
 
   useEffect(() => {
     if (isWidgetOpen) {
+      setIsLoading(true);
+      
       const timer = setTimeout(() => {
         const script = document.createElement('script');
         script.id = 'f8fccab3a27070026532ce35834ccf30efe43cec';
         script.src = 'https://olvonata.ru/pl/lite/widget/script?id=1391580';
         script.async = true;
         
+        script.onload = () => {
+          setTimeout(() => setIsLoading(false), 500);
+        };
+        
+        script.onerror = () => {
+          setIsLoading(false);
+        };
+        
         document.body.appendChild(script);
       }, 100);
 
       return () => {
         clearTimeout(timer);
+        setIsLoading(false);
         const existingScript = document.getElementById('f8fccab3a27070026532ce35834ccf30efe43cec');
         if (existingScript) {
           existingScript.remove();
@@ -80,7 +92,14 @@ const Index = () => {
 
             {isWidgetOpen && (
               <Card className="p-6 bg-card/95 backdrop-blur-sm shadow-2xl animate-scale-in">
-                <div id="widget-container" className="min-h-[200px]"></div>
+                {isLoading ? (
+                  <div className="min-h-[200px] flex flex-col items-center justify-center gap-4">
+                    <div className="animate-spin rounded-full h-12 w-12 border-4 border-primary border-t-transparent"></div>
+                    <p className="text-muted-foreground">Загружаем форму...</p>
+                  </div>
+                ) : (
+                  <div id="widget-container" className="min-h-[200px]"></div>
+                )}
               </Card>
             )}
           </div>
